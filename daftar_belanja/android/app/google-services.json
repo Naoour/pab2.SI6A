@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "757935645236",
+    "firebase_url": "https://daftarbelanja-bdeac-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "daftarbelanja-bdeac",
+    "storage_bucket": "daftarbelanja-bdeac.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:757935645236:android:5c5b7457011c314dbae061",
+        "android_client_info": {
+          "package_name": "com.example.daftar_belanja"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_t5Sth4uJlftJG-44iqkt3QmsUs1b8ps"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
