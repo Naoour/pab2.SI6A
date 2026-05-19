@@ -13,7 +13,7 @@ class FcmService {
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  static const String _baseUrl = 'https://notes-rest-api-ecru.vercel.app';
+  static const String _baseUrl = 'https://notes-rest-api-sooty.vercel.app/';
   static const String _topicName = 'notes';
 
   // VAPID key from Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
