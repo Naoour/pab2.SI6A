@@ -17,6 +17,9 @@ dependencies:
   flutter_local_notifications: ^21.0.0
   http: ^1.6.0
   shared_preferences: ^2.3.0
+  intl: any
+  generate: true           # ← aktifkan auto-generate dari ARB
+  uses-material-design: true
 
 dev_dependencies:
   flutter_test:

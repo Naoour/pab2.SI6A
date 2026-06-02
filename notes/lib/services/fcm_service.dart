@@ -132,17 +132,42 @@ class FcmService {
         });
       }
 
-      // 5. Subscribe to topics (Mobile Only)
-      if (!kIsWeb) {
-        await _messaging.subscribeToTopic(_topicName).timeout(
-          const Duration(seconds: 10),
-          onTimeout: () => debugPrint('Subscription to topic $_topicName timed out'),
-        );
-        await _messaging.subscribeToTopic('berita').timeout(
-          const Duration(seconds: 10),
-          onTimeout: () => debugPrint('Subscription to topic berita timed out'),
-        );
-        debugPrint('Subscribed to topics: $_topicName and berita');
+      /// Subscribe to topic (Mobile Only)
+      Future<bool> subscribeToTopic(String topic) async {
+        if (kIsWeb) {
+          debugPrint('Subscribe to topic direct function is not supported on Web');
+          return false;
+        }
+        try {
+          await _messaging.subscribeToTopic(topic).timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => debugPrint('Subscription to topic $topic timed out'),
+          );
+          debugPrint('Subscribed to topic: $topic');
+          return true;
+        } catch (e) {
+          debugPrint('Error subscribing to topic $topic: $e');
+          return false;
+        }
+      }
+
+      /// Unsubscribe from topic (Mobile Only)
+      Future<bool> unsubscribeFromTopic(String topic) async {
+        if (kIsWeb) {
+          debugPrint('Unsubscribe from topic direct function is not supported on Web');
+          return false;
+        }
+        try {
+          await _messaging.unsubscribeFromTopic(topic).timeout(
+            const Duration(seconds: 10),
+            onTimeout: () => debugPrint('Unsubscription from topic $topic timed out'),
+          );
+          debugPrint('Unsubscribed from topic: $topic');
+          return true;
+        } catch (e) {
+          debugPrint('Error unsubscribing from topic $topic: $e');
+          return false;
+        }
       }
 
       // 6. Get and print token for debugging (with timeout)

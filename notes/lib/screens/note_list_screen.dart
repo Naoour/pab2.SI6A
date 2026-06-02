@@ -15,20 +15,38 @@ class NoteListScreen extends StatelessWidget {
 
   NoteListScreen({super.key});
 
-  // Tampilkan dialog tambah note
-  void _showAddDialog(BuildContext context) {
-    showDialog(
+  // Tampilkan dialog tambah note dan simpan ke Firestore
+  void _showAddDialog(BuildContext context) async {
+    final Note? note = await showDialog<Note>(
       context: context,
       builder: (context) => const NoteDialog(),
     );
+
+    if (note != null) {
+      await _noteService.addNote(note);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Note berhasil ditambahkan')),
+        );
+      }
+    }
   }
 
-  // Tampilkan dialog edit note
-  void _showEditDialog(BuildContext context, Note note) {
-    showDialog(
+  // Tampilkan dialog edit note dan perbarui di Firestore
+  void _showEditDialog(BuildContext context, Note note) async {
+    final Note? updatedNote = await showDialog<Note>(
       context: context,
       builder: (context) => NoteDialog(note: note),
     );
+
+    if (updatedNote != null) {
+      await _noteService.updateNote(updatedNote);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Note berhasil diperbarui')),
+        );
+      }
+    }
   }
 
   // Konfirmasi dan hapus note

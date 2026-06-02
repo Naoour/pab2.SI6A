@@ -69,70 +69,84 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
       _loadingTopics.add(topic);
     });
 
-    bool success;
-    if (subscribe) {
-      // Subscribe via FCM (mobile) or API (web)
-      if (kIsWeb) {
-        success = await _fcmService.subscribeTokenToTopic(topic);
-      } else {
-        success = await _fcmService.subscribeToTopic(topic);
-      }
+    try {
+      bool success;
+      if (subscribe) {
+        // Subscribe via FCM (mobile) or API (web)
+        if (kIsWeb) {
+          success = await _fcmService.subscribeTokenToTopic(topic);
+        } else {
+          success = await _fcmService.subscribeToTopic(topic);
+        }
 
-      if (success) {
-        setState(() {
-          if (!_subscribedTopics.contains(topic)) {
-            _subscribedTopics.add(topic);
+        if (success) {
+          setState(() {
+            if (!_subscribedTopics.contains(topic)) {
+              _subscribedTopics.add(topic);
+            }
+          });
+          await _saveTopic();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Berhasil subscribe ke topic "$topic"'),
+                backgroundColor: Colors.green,
+                duration: const Duration(seconds: 2),
+              ),
+            );
           }
-        });
-        await _saveTopic();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Berhasil subscribe ke topic "$topic"'),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
-            ),
-          );
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Gagal subscribe ke topic "$topic"'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         }
       } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Gagal subscribe ke topic "$topic"'),
-              backgroundColor: Colors.red,
-            ),
-          );
+        // Unsubscribe
+        if (kIsWeb) {
+          success = true;
+        } else {
+          success = await _fcmService.unsubscribeFromTopic(topic);
         }
-      }
-    } else {
-      // Unsubscribe
-      if (kIsWeb) {
-        // Web doesn't support unsubscribe directly, just remove locally
-        success = true;
-      } else {
-        success = await _fcmService.unsubscribeFromTopic(topic);
-      }
 
-      if (success) {
-        setState(() {
-          _subscribedTopics.remove(topic);
-        });
-        await _saveTopic();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Berhasil unsubscribe dari topic "$topic"'),
-              backgroundColor: Colors.orange,
-              duration: const Duration(seconds: 2),
-            ),
-          );
+        if (success) {
+          setState(() {
+            _subscribedTopics.remove(topic);
+          });
+          await _saveTopic();
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Berhasil unsubscribe dari topic "$topic"'),
+                backgroundColor: Colors.orange,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Gagal unsubscribe dari topic "$topic"'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
         }
+      }
+    } catch (e) {
+      debugPrint('Error toggling subscription: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _loadingTopics.remove(topic);
+        });
       }
     }
-
-    setState(() {
-      _loadingTopics.remove(topic);
-    });
   }
 
   /// Add custom topic and subscribe
